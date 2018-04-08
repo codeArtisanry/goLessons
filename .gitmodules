@@ -1,0 +1,48 @@
+[submodule "submodules/radovskyb"]
+	path = submodules/radovskyb
+	url = git@github.com:radovskyb/go-packages
+	branch = master
+[submodule "submodules/mkaz"]
+	path = submodules/mkaz
+	url = git@github.com:mkaz/working-with-go
+	branch = master
+[submodule "submodules/Akagi201"]
+	path = submodules/Akagi201
+	url = git@github.com:Akagi201/learning-golang
+	branch = master
+[submodule "submodules/pjh130"]
+	path = submodules/pjh130
+	url = git@github.com:pjh130/go
+	branch = master
+[submodule "submodules/mycodesmells"]
+	path = submodules/mycodesmells
+	url = git@github.com:mycodesmells/golang-examples
+	branch = master
+[submodule "submodules/liguoqinjim"]
+	path = submodules/liguoqinjim
+	url = git@github.com:liguoqinjim/go-labs
+	branch = master
+[submodule "submodules/pathbox"]
+	path = submodules/pathbox
+	url = git@github.com:pathbox/learning-go
+	branch = master
+[submodule "submodules/foamdino"]
+	path = submodules/foamdino
+	url = git@github.com:foamdino/learning-go
+	branch = master
+[submodule "submodules/ningskyer"]
+	path = submodules/ningskyer
+	url = git@github.com:ningskyer/Algorithms-Learning-With-Go
+	branch = master
+[submodule "submodules/1851616111"]
+	path = submodules/1851616111
+	url = git@github.com:1851616111/util
+	branch = master
+[submodule "submodules/bingoohuang"]
+	path = submodules/bingoohuang
+	url = git@github.com:bingoohuang/go-utils
+	branch = master
+[submodule "submodules/xiongyejun"]
+	path = submodules/xiongyejun
+	url = git@github.com:xiongyejun/08-go
+	branch = master
