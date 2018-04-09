@@ -2,6 +2,7 @@
 set -e
 
 remove_submodules=("
+git@github.com:senghoo/golang-design-pattern.git/pattern
 
 ")
 ## Blogs
@@ -18,12 +19,15 @@ git@github.com:xiongyejun/08-go.git
 git@github.com:ningskyer/Algorithms-Learning-With-Go.git   #算法
 git@github.com:bingoohuang/go-utils.git
 git@github.com:1851616111/util.git
+git@github.com:tmrts/go-patterns.git/parttern
+git@github.com:senghoo/golang-design-pattern.git/parttern
+
 ")
 
 
 function parse() {
   url=${1%.git*}    # git@domain:username/filename
-  _bd=${1#*.git} 
+  _bd=${1##*.git} 
   [[ "$_bd" =~ "@" ]] && branch=${_bd#*@} || branch=master
   subdir=${_bd%%@*}
   subdir=${subdir##*/}

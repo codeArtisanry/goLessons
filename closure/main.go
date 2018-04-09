@@ -17,6 +17,8 @@ func CostTime() func() {
 	}
 }
 
+// defer CostTime()()
+
 // 2.因为我们有对闭包的支持，我们也能引用一些定义在函数作用域当中的数据
 func test2() {
 	x := 5
@@ -40,16 +42,18 @@ func main() {
 	// y := x(1)
 	// fmt.Println(y)
 
-	// b := closure1()
-	// b() //这里输出11
-	// b() //这里输出12
-	var a = 10
-	p := &a
-	*p++
-	println(&a)
-	println(p, *p)
-	closure0()
-	test2()
+	f, a := outer()
+	println(a)
+	println(f())
+	println(f())
+
+	// var a = 10
+	// p := &a
+	// *p++
+	// println(&a)
+	// println(p, *p)
+	// closure0()
+	// test2()
 }
 
 func closure0() {
@@ -94,10 +98,30 @@ func closure(x int) func(i int) int {
 // closure x: 12
 func closure1() func() {
 	var x = 10
+	fmt.Printf("outer x:%p", &x)
+
 	return func() {
 		x++
 		fmt.Println("closure x:", x)
+		fmt.Printf("inner x:%p", &x)
 	}
+
+}
+
+// Closures: don't mutate outer vars, instead redefine them!
+func outer() (func() int, int) {
+	outer_var := 2
+	inner := func() int {
+		outer_var += 99 // attempt to mutate outer_var from outer scope
+		fmt.Printf("inner x:%p\n", &outer_var)
+		fmt.Printf("inner x:%+v\n", outer_var)
+
+		return outer_var // => 101 (but outer_var is a newly redefined
+		//         variable visible only inside inner)
+	}
+	fmt.Printf("outer x:%p\n", &outer_var)
+
+	return inner, outer_var // => 101, 2 (outer_var is still 2, not mutated by inner!)
 }
 
 //
