@@ -62,3 +62,7 @@
 	path = parttern/senghoo
 	url = git@github.com:senghoo/golang-design-pattern
 	branch = master
+[submodule "submodules/cch123"]
+	path = submodules/cch123
+	url = git@github.com:cch123/test
+	branch = master

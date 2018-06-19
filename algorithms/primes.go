@@ -1,4 +1,4 @@
-package main
+package algorithms
 
 import "fmt"
 
@@ -54,7 +54,7 @@ func EulersTotient(max uint64) []uint64 {
 	}
 	return phi
 }
-func main() {
+func primes() {
 	fmt.Println(EulersTotient(10))
 	// primes := PrimeSieve(1000000000)
 	// fmt.Println(len(primes))

@@ -1,4 +1,4 @@
-package main
+package psort
 
 import (
 	"fmt"
@@ -24,11 +24,13 @@ func analysis(data []int, fn func([]int)) {
 	// time.Sleep(time.Second * 6)
 	// fmt.Println(data)
 }
+
+// GoSort is inner sort for go
 func GoSort(data []int) {
 	sort.Sort(sort.IntSlice(data))
 }
 func main() {
-	var num int = 10000
+	var num = 10000
 	rand.Seed(time.Now().UnixNano())
 	var data = make([][]int, 2)
 	for k := range data {
@@ -59,15 +61,15 @@ func main() {
 	// 20.921417413s
 }
 
-// QuickSort
+// QuickSort for single
 func QuickSort(data []int) {
 
-	var n int = len(data)
-	var middle int = (n - 1) / 2
-	var pivot int = data[middle]
+	var n = len(data)
+	var middle = (n - 1) / 2
+	var pivot = data[middle]
 
-	var left int = 0
-	var right int = n - 1
+	var left = 0
+	var right = n - 1
 
 	//partition
 	for left <= right {
@@ -93,7 +95,7 @@ func QuickSort(data []int) {
 	}
 }
 
-// HoareSort
+// HoareSort is faster sort
 func HoareSort(data []int) {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	var wg = new(sync.WaitGroup)
@@ -103,93 +105,113 @@ func HoareSort(data []int) {
 }
 
 func quickSortParallel(data []int, wg *sync.WaitGroup, threads int) {
-	var n int = len(data)
+	var n = len(data)
 	defer wg.Done()
 
 	if threads <= 1 || n < 1000 {
 		QuickSort(data)
 	} else {
 
-		var middle int = (n - 1) / 2
-		var pivot int = data[middle]
+		var middle = (n - 1) / 2
+		var pivot = data[middle]
 
-		var left int = 0
-		var right int = n - 1
-		var ch1 = make(chan int)
-		var ch2 = make(chan int)
-		var ch11 = make(chan int)
-		var ch22 = make(chan int)
+		var left = 0
+		var right = n - 1
+
 		//partition
-
-		// for data[left] < pivot {
-		// 	left++
-		// }
-
-		go func() {
-			for range ch1 {
-				for data[left] > pivot {
-					left++
-				}
-				// println("after:", left, right, data[left], data[right])
-				println("chanel 1")
-				ch11 <- 1
-			}
-		}()
-		go func() {
-			i := 1
-			for range ch2 {
-
-				for data[right] > pivot {
-					right--
-				}
-				i++
-				print(i, " ")
-				println("chanel 2")
-
-				// println(i, ">>>>>:", left, right, data[left], data[right])
-				ch22 <- 1
-			}
-		}()
 		for left <= right {
-			println("go....")
+			// for data[left] < pivot {
+			// 	left++
+			// }
 
-			ch2 <- 1
-			ch1 <- 1
-			println("gogo....")
-
-			<-ch11
-			<-ch22
-			println("gogogo....")
-			println(left, right, data[left], data[right])
-
-			// 	// swap(&data[left], &data[right])
-			if data[left] > data[right] {
-
-				data[left], data[right] = data[right], data[left]
-
+			for data[left] < pivot {
+				left++
 			}
-
-			left++
-			right--
-			var input string
-			fmt.Scanln(DevNull)
-
+			for data[right] > pivot {
+				right--
+			}
+			// println(left)
+			if left <= right {
+				// swap(&data[left], &data[right])
+				data[left], data[right] = data[right], data[left]
+				left++
+				right--
+			}
 		}
-		println("pivot:", pivot)
 
-		close(ch1)
-		close(ch2)
-		close(ch11)
-		close(ch22)
-		for {
-		}
-		// println(left)
-		// if left <= right {
-		// 	// swap(&data[left], &data[right])
-		// 	data[left], data[right] = data[right], data[left]
+		// var ch1 = make(chan int)
+		// var ch2 = make(chan int)
+		// var ch11 = make(chan int)
+		// var ch22 = make(chan int)
+		// //partition
+
+		// // for data[left] < pivot {
+		// // 	left++
+		// // }
+
+		// go func() {
+		// 	for range ch1 {
+		// 		for data[left] > pivot {
+		// 			left++
+		// 		}
+		// 		// println("after:", left, right, data[left], data[right])
+		// 		// println("chanel 1")
+		// 		ch11 <- 1
+		// 	}
+		// }()
+		// go func() {
+		// 	i := 1
+		// 	for range ch2 {
+
+		// 		for data[right] > pivot {
+		// 			right--
+		// 		}
+		// 		i++
+		// 		// print(i, " ")
+		// 		// println("chanel 2")
+
+		// 		// println(i, ">>>>>:", left, right, data[left], data[right])
+		// 		ch22 <- 1
+		// 	}
+		// }()
+		// for left <= right {
+		// 	println("go....")
+
+		// 	ch2 <- 1
+		// 	ch1 <- 1
+		// 	println("gogo....")
+
+		// 	<-ch11
+		// 	<-ch22
+		// 	println("gogogo....")
+		// 	println(left, right, data[left], data[right])
+
+		// 	// 	// swap(&data[left], &data[right])
+		// 	if data[left] > data[right] {
+
+		// 		data[left], data[right] = data[right], data[left]
+
+		// 	}
+
 		// 	left++
 		// 	right--
+
 		// }
+		// // println("pivot:", pivot)
+
+		// close(ch1)
+		// close(ch2)
+		// close(ch11)
+		// close(ch22)
+		// for {
+		// }
+		// // println(left)
+		// // if left <= right {
+		// // 	// swap(&data[left], &data[right])
+		// // 	data[left], data[right] = data[right], data[left]
+		// // 	left++
+		// // 	right--
+		// // }
 
 		wgN := new(sync.WaitGroup)
 		if right > 0 {

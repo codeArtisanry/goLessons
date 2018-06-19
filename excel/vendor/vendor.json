@@ -1,0 +1,13 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "O5tjctW2ODk3WVwJVzTCqAgcvrI=",
+			"path": "github.com/xuri/excelize",
+			"revision": "9e463b4614348b3ddc04b1fedd5d662845ce0fb9",
+			"revisionTime": "2018-05-27T03:25:55Z"
+		}
+	],
+	"rootPath": "github.com/rinetd/go-learning/excel"
+}

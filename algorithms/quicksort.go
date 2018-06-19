@@ -1,4 +1,4 @@
-package main
+package algorithms
 
 import (
 	"fmt"
@@ -25,7 +25,7 @@ func analysis(data []int, fn func([]int)) {
 func GoSort(data []int) {
 	sort.Sort(sort.IntSlice(data))
 }
-func main() {
+func QuickSort_Test() {
 	var d = []int{2, 7, 10, 8, 3, 5, 9, 6, 9, 10, 12}
 	fmt.Println(d)
 	QuickSort(d)
@@ -100,11 +100,11 @@ func HoareSort(data []int) {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	var wg = new(sync.WaitGroup)
 	// wg.Add(1)
-	quickSortParallel(data, wg, runtime.NumCPU()<<10)
+	QuickSortParallel(data, wg, runtime.NumCPU()<<10)
 	wg.Wait()
 }
 
-func quickSortParallel(data []int, wg *sync.WaitGroup, threads int) {
+func QuickSortParallel(data []int, wg *sync.WaitGroup, threads int) {
 	var n int = len(data)
 	defer wg.Done()
 
@@ -142,11 +142,11 @@ func quickSortParallel(data []int, wg *sync.WaitGroup, threads int) {
 		wgN := new(sync.WaitGroup)
 		if right > 0 {
 			wgN.Add(1)
-			go quickSortParallel(data[:right+1], wgN, threads/2)
+			go QuickSortParallel(data[:right+1], wgN, threads/2)
 		}
 		if left < n {
 			wgN.Add(1)
-			go quickSortParallel(data[left:], wgN, threads/2)
+			go QuickSortParallel(data[left:], wgN, threads/2)
 		}
 		wgN.Wait()
 	}

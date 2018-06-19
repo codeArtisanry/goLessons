@@ -1,4 +1,4 @@
 default: update
 
 update:
-	bash submodule.sh
+	- bash submodule.sh
