@@ -2,9 +2,6 @@
 set -e
 
 remove_submodules=("
-git@github.com:tmrts/go-patterns.git/parttern
-git@github.com:senghoo/golang-design-pattern.git/parttern
-git@github.com:BPing/golang_design_pattern.git/parttern
 ")
 ## Blogs
 submodules=("
@@ -30,7 +27,6 @@ git@github.com:13138899620/go-.git                         #gogin框架
 git@github.com:hairichuhe/gostudy.git
 git@github.com:fengpf/gowhole.git
 git@github.com:xiedongmingming/golang.git 
-
 ")
 
 
