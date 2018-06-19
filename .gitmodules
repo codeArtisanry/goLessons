@@ -66,3 +66,7 @@
 	path = submodules/cch123
 	url = git@github.com:cch123/test
 	branch = master
+[submodule "submodules/axgle"]
+	path = submodules/axgle
+	url = git@github.com:axgle/go
+	branch = master
