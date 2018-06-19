@@ -46,21 +46,9 @@
 	path = submodules/xiongyejun
 	url = git@github.com:xiongyejun/08-go
 	branch = master
-[submodule "pattern/senghoo"]
-	path = pattern/senghoo
-	url = git@github.com:senghoo/golang-design-pattern
-	branch = master
 [submodule "parttern/rinetd"]
 	path = parttern/rinetd
 	url = git@github.com:rinetd/go-patterns
-	branch = master
-[submodule "parttern/tmrts"]
-	path = parttern/tmrts
-	url = git@github.com:tmrts/go-patterns
-	branch = master
-[submodule "parttern/senghoo"]
-	path = parttern/senghoo
-	url = git@github.com:senghoo/golang-design-pattern
 	branch = master
 [submodule "submodules/cch123"]
 	path = submodules/cch123
