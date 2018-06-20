@@ -22,10 +22,6 @@
 	path = submodules/liguoqinjim
 	url = git@github.com:liguoqinjim/go-labs
 	branch = master
-[submodule "submodules/pathbox"]
-	path = submodules/pathbox
-	url = git@github.com:pathbox/learning-go
-	branch = master
 [submodule "submodules/foamdino"]
 	path = submodules/foamdino
 	url = git@github.com:foamdino/learning-go
@@ -57,4 +53,36 @@
 [submodule "submodules/axgle"]
 	path = submodules/axgle
 	url = git@github.com:axgle/go
+	branch = master
+[submodule "submodules/pathbox/learning-go"]
+	path = submodules/pathbox/learning-go
+	url = git@github.com:pathbox/learning-go
+	branch = master
+[submodule "parttern/tmrts/go-patterns"]
+	path = parttern/tmrts/go-patterns
+	url = git@github.com:tmrts/go-patterns
+	branch = master
+[submodule "parttern/senghoo/golang-design-pattern"]
+	path = parttern/senghoo/golang-design-pattern
+	url = git@github.com:senghoo/golang-design-pattern
+	branch = master
+[submodule "parttern/BPing/golang_design_pattern"]
+	path = parttern/BPing/golang_design_pattern
+	url = git@github.com:BPing/golang_design_pattern
+	branch = master
+[submodule "submodules/13138899620"]
+	path = submodules/13138899620
+	url = git@github.com:13138899620/go-
+	branch = master
+[submodule "submodules/hairichuhe"]
+	path = submodules/hairichuhe
+	url = git@github.com:hairichuhe/gostudy
+	branch = master
+[submodule "submodules/fengpf"]
+	path = submodules/fengpf
+	url = git@github.com:fengpf/gowhole
+	branch = master
+[submodule "submodules/xiedongmingming"]
+	path = submodules/xiedongmingming
+	url = git@github.com:xiedongmingming/golang
 	branch = master

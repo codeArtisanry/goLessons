@@ -55,7 +55,7 @@ function parse() {
   subdir=${_bd%%@*}
   subdir=${subdir##*/}
   if [[ -n "$subdir" ]]; then
-      dir=$subdir/$user
+      dir=$subdir/$user/$file
     else
       dir=$default_dir/$user
   fi
@@ -102,7 +102,7 @@ done
 ### 2. 添加新的 submodules
 for u in $submodules; do
   parse $u
-  # [ "$url" == "." ] || [ -d ./$dir ] || git submodule add --force -b $branch $url $dir
+  [ "$url" == "." ] || [ -d ./$dir ] || git submodule add --force -b $branch $url $dir
   echo git submodule add --force -b $branch $url $dir
 done
 
