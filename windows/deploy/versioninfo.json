@@ -1,15 +1,15 @@
 {
-    "FixedFileInfo": {
+    "_FixedFileInfo": {
         "FileVersion": {
             "Major": 2018,
             "Minor": 6,
-            "Patch": 9,
+            "Patch": 27,
             "Build": 0
         },
         "ProductVersion": {
             "Major": 2018,
             "Minor": 6,
-            "Patch": 9,
+            "Patch": 27,
             "Build": 0
         },
         "FileFlagsMask": "3f",
@@ -22,9 +22,9 @@
         "FileDescription": "履职考评系统升级",
         "FileVersion": "2.1.0",
         "ProductName": "履职考评系统",
-        "ProductVersion": "2018.6.9.1",
+        "ProductVersion": "2018.7.1",
         "LegalCopyright": "Copyright@pytool",
-        "OriginalFilename": "deploy.exe",
+        "OriginalFilename": "update.exe",
         "Comments": " ",
         "CompanyName": "Company",
         "InternalName": "",

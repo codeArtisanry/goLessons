@@ -1,13 +1,19 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
+	"strings"
+	"sync"
 	"time"
 
 	"github.com/bramvdbogaerde/go-scp"
 	"golang.org/x/crypto/ssh"
+
+	_ "github.com/go-sql-driver/mysql" // mysql driver
 )
 
 //go:generate goversioninfo -icon=icon.ico
@@ -128,23 +134,22 @@ func createDeploy() {
 	ioutil.WriteFile("deploy.sh", []byte(data), 0755)
 }
 
-var nginx_host = "15.14.12.150:22"
-var tomcat_host = "15.14.12.151:22"
-var lzkpbi_host = "15.14.12.153:22"
+func createDir(wg *sync.WaitGroup) {
+	wg.Add(1)
+	defer wg.Done()
 
-// var nginx_host = "118.190.117.250:3009"
-// var tomcat_host = "118.190.117.250:3009"
-// var lzkpbi_host = "111.235.181.129:443"
-
-func createDir() {
-	fmt.Println("Connect to server:", nginx_host)
+	fmt.Println("[createDir] Connect to server:", nginx_host)
 	DialSSH(nginx_host, `mkdir -p /docker/update/ /docker/tomcat/webapps/ /docker/bianban/lzkpv4/ /docker/bianban/backendv4/ /docker/rollback/`)
 	DialSSH(tomcat_host, `mkdir -p /docker/update/ /docker/tomcat/webapps/ /docker/bianban/lzkpv4/ /docker/bianban/backendv4/ /docker/rollback/`)
 	DialSSH(lzkpbi_host, `mkdir -p /docker/update/ /docker/tomcat/webapps/ /docker/bianban/lzkpv4/ /docker/bianban/backendv4/ /docker/rollback/`)
 }
-func deployFrontend() error {
+func deployFrontend(wg *sync.WaitGroup) error {
+	wg.Add(1)
+	defer wg.Done()
+
 	// 1. check frontend
 	if Exists("lotus.tar.gz") {
+		fmt.Println("[deployFrontend] Connect to server:", nginx_host)
 		err := SCP(nginx_host, "lotus.tar.gz", "/docker/update/lotus.tar.gz")
 		if err != nil {
 			return err
@@ -156,10 +161,14 @@ func deployFrontend() error {
 	return nil
 }
 
-func deployTomcat() error {
+func deployTomcat(wg *sync.WaitGroup) error {
+	wg.Add(1)
+	defer wg.Done()
+
 	// 1. check frontend
 	if Exists("ROOT.war") {
-		fmt.Println("Deploy tomcat api !")
+		fmt.Println("[deployTomcat] Connect to server:", nginx_host)
+
 		// 1. backup old
 		DialSSH(nginx_host, `rm -f /docker/rollback/ROOT.war; mv /docker/bianban/lzkpv4/ROOT.war /docker/rollback/ROOT.war `)
 
@@ -175,9 +184,14 @@ func deployTomcat() error {
 	}
 	return nil
 }
-func deployBackend() error {
+func deployBackend(wg *sync.WaitGroup) error {
+	wg.Add(1)
+	defer wg.Done()
+
 	// 1. check frontend
 	if Exists("backendv4.jar") {
+		fmt.Println("[deployBackend] Connect to server:", nginx_host)
+
 		DialSSH(nginx_host, "rm -f /docker/rollback/backendv4.jar; mv /docker/bianban/backendv4/backendv4.jar /docker/rollback/backendv4.jar")
 		err := SCP(nginx_host, "backendv4.jar", "/docker/bianban/backendv4/backendv4.jar")
 		if err != nil {
@@ -190,8 +204,13 @@ func deployBackend() error {
 	return nil
 }
 
-func deployBIfront() error {
+func deployBIfront(wg *sync.WaitGroup) error {
+	wg.Add(1)
+	defer wg.Done()
+
 	if Exists("bi.tar.gz") {
+		fmt.Println("[deployBIfront] Connect to server:", nginx_host)
+
 		err := SCP(nginx_host, "bi.tar.gz", "/docker/update/bi.tar.gz")
 		if err != nil {
 			return err
@@ -203,7 +222,10 @@ func deployBIfront() error {
 	return nil
 }
 
-func deployLzkpbi() error {
+func deployLzkpbi(wg *sync.WaitGroup) error {
+	wg.Add(1)
+	defer wg.Done()
+
 	var cmdlzkpbi = `
 sed -i -e "s|.dbServerName=.*|.dbServerName=15.14.12.152:3306|g" \
 	-e "s|.dbName=.*|.dbName=lzkp_bi|g" \
@@ -216,6 +238,8 @@ sed -i -e "s|.dbServerName=.*|.dbServerName=15.14.12.152:3306|g" \
 `
 	// 1. check frontend
 	if Exists("lzkpbi.war") {
+		fmt.Println("[deployLzkpbi] Connect to server:", lzkpbi_host)
+
 		fmt.Println("Deploy lzkpbi !")
 		// 1. backup old
 		DialSSH(lzkpbi_host, `rm -f /docker/rollback/lzkpbi.war; mv /docker/update/lzkpbi.war /docker/rollback/lzkpbi.war `)
@@ -233,8 +257,13 @@ sed -i -e "s|.dbServerName=.*|.dbServerName=15.14.12.152:3306|g" \
 	return nil
 }
 
-func deployetl() {
+func deployetl(wg *sync.WaitGroup) {
+	wg.Add(1)
+	defer wg.Done()
+
 	if Exists("etl.zip") {
+		fmt.Println("[deployetl] Connect to server:", lzkpbi_host)
+
 		SCP(lzkpbi_host, "etl.zip", "/docker/bianban/etl.zip")
 
 		DialSSH(lzkpbi_host, `rm -fr /root/etl; unzip /docker/bianban/etl.zip -d /root/;`)
@@ -254,13 +283,106 @@ func Exists(path string) bool {
 	}
 	return true
 }
-func main() {
-	createDir()
-	deployFrontend()
-	deployTomcat()
-	deployBackend()
-	// bi
-	deployBIfront()
-	deployLzkpbi()
-	deployetl()
+
+// Load for loading data for testing
+func MysqlLoad(file, dbname string) {
+	db, err := sql.Open("mysql", dsn)
+	if err != nil {
+		fmt.Errorf("Fail to connect database. %s", err.Error())
+	}
+	defer db.Close()
+	db.Ping()
+
+	_, err = db.Exec("USE " + dbname)
+	if err != nil {
+		fmt.Printf("[db.EXEC] switch databases %s -> %s : \n", dbname, err.Error())
+		return
+	}
+
+	content, err := ioutil.ReadFile(file)
+	if err != nil {
+		fmt.Errorf("readfile error")
+	}
+
+	defer func() {
+		if err := recover(); err != nil {
+			fmt.Println("[EXEC RECOVER] error ", err)
+		}
+	}()
+
+	queries := strings.Split(string(content), ";")
+	// fmt.Println(queries)
+	for _, query := range queries {
+		if strings.TrimSpace(query) != "" {
+
+			// fmt.Println(query)
+			_, err := db.Exec(query)
+			if err != nil {
+				fmt.Errorf("[db.EXEC] %s -> %s : ", query, err.Error())
+			}
+			// a, _ := res.RowsAffected()
+			// fmt.Println(a)
+		}
+	}
+	fmt.Println("import ", file, " finish !")
 }
+
+var name = map[string]bool{
+	"mengshan":  true,
+	"mengyin":   true,
+	"pingyi":    true,
+	"shizhi":    true,
+	"tancheng":  true,
+	"yinan":     true,
+	"yishui":    true,
+	"feixian":   true,
+	"gaoxinqu":  true,
+	"hedong":    true,
+	"jingkaiqu": true,
+	"junan":     true,
+	"luozhuang": true,
+	"lanling":   true,
+	"lanshan":   true,
+	"lingang":   true,
+	"linshu":    true,
+}
+
+func main() {
+
+	var wg sync.WaitGroup
+	go createDir(&wg)
+	// lotus.tar.gz
+	go deployFrontend(&wg)
+	// ROOT.war
+	go deployTomcat(&wg)
+	// backendv4.jar
+	go deployBackend(&wg)
+	// bi.tar.gz
+	go deployBIfront(&wg)
+	// lzkpbi.war
+	go deployLzkpbi(&wg)
+	// etl.zip
+	go deployetl(&wg)
+
+	files, _ := filepath.Glob("*.sql")
+	for _, f := range files {
+		db := strings.Split(f, "_")
+		if name[db[0]] {
+			fmt.Println(f)
+			MysqlLoad(f, db[0])
+		}
+	}
+	wg.Wait()
+}
+
+var nginx_host = "15.14.12.150:22"
+var tomcat_host = "15.14.12.151:22"
+var lzkpbi_host = "15.14.12.153:22"
+
+// var nginx_host = "118.190.117.250:3009"
+// var tomcat_host = "118.190.117.250:3009"
+// var lzkpbi_host = "118.190.117.250:3009"
+
+// var dsn = `root:000000@tcp(192.168.5.100:3306)/?parseTime=true&loc=Local`
+
+var dsn = `lzkp:yqhtfjzm@tcp(15.14.12.152:3306)/?parseTime=true&loc=Local`
