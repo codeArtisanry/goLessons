@@ -1,0 +1,17 @@
+{
+	"version": 0,
+	"dependencies": [
+		{
+			"importpath": "github.com/go-sql-driver/mysql",
+			"repository": "https://github.com/go-sql-driver/mysql",
+			"revision": "66b7d5c4956096efd4c945494d64ad73f1d9ec39",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/go-zoo/bone",
+			"repository": "https://github.com/go-zoo/bone",
+			"revision": "f3b98c163f64d97ce540b58663ba796cd4b30dc4",
+			"branch": "HEAD"
+		}
+	]
+}

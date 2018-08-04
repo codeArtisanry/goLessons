@@ -6,6 +6,7 @@ import (
 	"runtime"
 	"sort"
 	"sync"
+	"sync/atomic"
 	"time"
 )
 
@@ -221,6 +222,60 @@ func quickSortParallel(data []int, wg *sync.WaitGroup, threads int) {
 		if left < n {
 			wgN.Add(1)
 			go quickSortParallel(data[left:], wgN, threads/2)
+		}
+		wgN.Wait()
+	}
+}
+
+func quickSortParallel3(data []int, wg *sync.WaitGroup, threads int) {
+	var n = len(data)
+	defer wg.Done()
+
+	if threads <= 1 || n < 100 {
+		QuickSort(data)
+	} else {
+
+		var middle = (n - 1) / 2
+		var pivot = data[middle]
+
+		var left = 0
+		var right = n - 1
+		// var flag int32 = 0
+		var flag = new(int32)
+		//partition
+		for left <= right {
+			// for data[left] < pivot {
+			// 	left++
+			// }
+			fmt.Printf("flag:%p\n", &flag)
+			go func() {
+				for data[left] < pivot {
+					left++
+				}
+				atomic.StoreInt32(flag, 1)
+			}()
+			for data[right] > pivot {
+				right--
+			}
+			for 1 == atomic.LoadInt32(flag) {
+			}
+			// println(left)
+			if left <= right {
+				// swap(&data[left], &data[right])
+				data[left], data[right] = data[right], data[left]
+				left++
+				right--
+			}
+		}
+
+		wgN := new(sync.WaitGroup)
+		if right > 0 {
+			wgN.Add(1)
+			go quickSortParallel3(data[:right+1], wgN, threads/2)
+		}
+		if left < n {
+			wgN.Add(1)
+			go quickSortParallel3(data[left:], wgN, threads/2)
 		}
 		wgN.Wait()
 	}

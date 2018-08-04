@@ -86,3 +86,19 @@
 	path = submodules/xiedongmingming
 	url = git@github.com:xiedongmingming/golang
 	branch = master
+[submodule "submodules/cleesmith"]
+	path = submodules/cleesmith
+	url = git@github.com:cleesmith/golang_learning
+	branch = master
+[submodule "submodules/LinuxGit"]
+	path = submodules/LinuxGit
+	url = git@github.com:LinuxGit/Code
+	branch = master
+[submodule "submodules/SimonWaldherr"]
+	path = submodules/SimonWaldherr
+	url = git@github.com:SimonWaldherr/golibs
+	branch = master
+[submodule "submodules/chauhanr"]
+	path = submodules/chauhanr
+	url = git@github.com:chauhanr/go-building-blocks
+	branch = master

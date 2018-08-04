@@ -1,130 +1,13 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"io/ioutil"
 	"os"
-	"path/filepath"
-	"strings"
 	"sync"
-	"time"
-
-	"github.com/bramvdbogaerde/go-scp"
-	"golang.org/x/crypto/ssh"
-
-	_ "github.com/go-sql-driver/mysql" // mysql driver
 )
 
 //go:generate goversioninfo -icon=icon.ico
-var config *ssh.ClientConfig
-
-func init() {
-	config = Genconfig()
-}
-func Genconfig() *ssh.ClientConfig {
-	var User string = "root"
-	var password string = "HR2018!!"
-	// var connectKey string = "/home/ubuntu/.ssh/id_rsa"
-	var connectKey string
-	var permBytes []byte
-
-	config := &ssh.ClientConfig{}
-	if connectKey != "" {
-		// Read PublicKey
-
-		buffer, err := ioutil.ReadFile(connectKey)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, "Error:%s%n", err)
-			return nil
-		}
-		if len(permBytes) != 0 {
-			buffer = permBytes
-		}
-		key, err := ssh.ParsePrivateKey(buffer)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, "Error:%s%n", err)
-			return nil
-		}
-
-		// Create ssh client config for KeyAuth
-		config = &ssh.ClientConfig{
-			User: User,
-			Auth: []ssh.AuthMethod{
-				ssh.PublicKeys(key)},
-			Timeout:         60 * time.Second,
-			HostKeyCallback: ssh.InsecureIgnoreHostKey(),
-		}
-	} else {
-		// Create ssh client config for PasswordAuth
-		config = &ssh.ClientConfig{
-			User: User,
-			Auth: []ssh.AuthMethod{
-				ssh.Password(password)},
-			Timeout:         60 * time.Second,
-			HostKeyCallback: ssh.InsecureIgnoreHostKey(),
-		}
-	}
-	return config
-}
-
-func DialSSH(hostport, cmdStr string) int {
-
-	// New Connext create
-	conn, err := ssh.Dial("tcp", hostport, config)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "cannot connect %v: %v \n", hostport, err)
-		return 1
-	}
-
-	// New Session
-	session, err := conn.NewSession()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "cannot open new session: %v \n", err)
-		return 1
-	}
-
-	// go func() {
-	// 	time.Sleep(2419200 * time.Second)
-	// 	conn.Close()
-	// }()
-
-	session.Stdout = os.Stdout
-	session.Stderr = os.Stderr
-
-	err = session.Run(cmdStr)
-	session.Close()
-	conn.Close()
-	return 0
-}
-
-func SCP(hostport, src, dst string) (err error) {
-
-	// Create a new SCP client
-	client := scp.NewClient(hostport, config)
-
-	// Connect to the remote server
-	err = client.Connect()
-	if err != nil {
-		fmt.Println("Couldn't establisch a connection to the remote server ", err)
-		return err
-	}
-
-	// Open a file
-	f, _ := os.Open(src)
-
-	// Close session after the file has been copied
-	defer client.Session.Close()
-
-	// Close the file after it has been copied
-	defer f.Close()
-
-	// Finaly, copy the file over
-	// Usage: CopyFile(fileReader, remotePath, permission)
-
-	client.CopyFile(f, dst, "0644")
-	return nil
-}
 
 func createDeploy() {
 
@@ -134,21 +17,14 @@ func createDeploy() {
 	ioutil.WriteFile("deploy.sh", []byte(data), 0755)
 }
 
-func createDir(wg *sync.WaitGroup) {
-	wg.Add(1)
-	defer wg.Done()
-
-	fmt.Println("[createDir] Connect to server:", nginx_host)
-	DialSSH(nginx_host, `mkdir -p /docker/update/ /docker/tomcat/webapps/ /docker/bianban/lzkpv4/ /docker/bianban/backendv4/ /docker/rollback/`)
-	DialSSH(tomcat_host, `mkdir -p /docker/update/ /docker/tomcat/webapps/ /docker/bianban/lzkpv4/ /docker/bianban/backendv4/ /docker/rollback/`)
-	DialSSH(lzkpbi_host, `mkdir -p /docker/update/ /docker/tomcat/webapps/ /docker/bianban/lzkpv4/ /docker/bianban/backendv4/ /docker/rollback/`)
-}
 func deployFrontend(wg *sync.WaitGroup) error {
 	wg.Add(1)
 	defer wg.Done()
 
 	// 1. check frontend
 	if Exists("lotus.tar.gz") {
+		DialSSH(nginx_host, `mkdir -p /docker/update/ /docker/tomcat/webapps/ /docker/bianban/lzkpv4/ /docker/bianban/backendv4/ /docker/rollback/`)
+
 		fmt.Println("[deployFrontend] Connect to server:", nginx_host)
 		err := SCP(nginx_host, "lotus.tar.gz", "/docker/update/lotus.tar.gz")
 		if err != nil {
@@ -167,6 +43,8 @@ func deployTomcat(wg *sync.WaitGroup) error {
 
 	// 1. check frontend
 	if Exists("ROOT.war") {
+		DialSSH(tomcat_host, `mkdir -p /docker/update/ /docker/tomcat/webapps/ /docker/bianban/lzkpv4/ /docker/bianban/backendv4/ /docker/rollback/`)
+
 		fmt.Println("[deployTomcat] Connect to server:", nginx_host)
 
 		// 1. backup old
@@ -241,6 +119,8 @@ sed -i -e "s|.dbServerName=.*|.dbServerName=15.14.12.152:3306|g" \
 		fmt.Println("[deployLzkpbi] Connect to server:", lzkpbi_host)
 
 		fmt.Println("Deploy lzkpbi !")
+		DialSSH(lzkpbi_host, `mkdir -p /docker/update/ /docker/tomcat/webapps/ /docker/bianban/lzkpv4/ /docker/bianban/backendv4/ /docker/rollback/`)
+
 		// 1. backup old
 		DialSSH(lzkpbi_host, `rm -f /docker/rollback/lzkpbi.war; mv /docker/update/lzkpbi.war /docker/rollback/lzkpbi.war `)
 
@@ -284,73 +164,9 @@ func Exists(path string) bool {
 	return true
 }
 
-// Load for loading data for testing
-func MysqlLoad(file, dbname string) {
-	db, err := sql.Open("mysql", dsn)
-	if err != nil {
-		fmt.Errorf("Fail to connect database. %s", err.Error())
-	}
-	defer db.Close()
-	db.Ping()
-
-	_, err = db.Exec("USE " + dbname)
-	if err != nil {
-		fmt.Printf("[db.EXEC] switch databases %s -> %s : \n", dbname, err.Error())
-		return
-	}
-
-	content, err := ioutil.ReadFile(file)
-	if err != nil {
-		fmt.Errorf("readfile error")
-	}
-
-	defer func() {
-		if err := recover(); err != nil {
-			fmt.Println("[EXEC RECOVER] error ", err)
-		}
-	}()
-
-	queries := strings.Split(string(content), ";")
-	// fmt.Println(queries)
-	for _, query := range queries {
-		if strings.TrimSpace(query) != "" {
-
-			// fmt.Println(query)
-			_, err := db.Exec(query)
-			if err != nil {
-				fmt.Errorf("[db.EXEC] %s -> %s : ", query, err.Error())
-			}
-			// a, _ := res.RowsAffected()
-			// fmt.Println(a)
-		}
-	}
-	fmt.Println("import ", file, " finish !")
-}
-
-var name = map[string]bool{
-	"mengshan":  true,
-	"mengyin":   true,
-	"pingyi":    true,
-	"shizhi":    true,
-	"tancheng":  true,
-	"yinan":     true,
-	"yishui":    true,
-	"feixian":   true,
-	"gaoxinqu":  true,
-	"hedong":    true,
-	"jingkaiqu": true,
-	"junan":     true,
-	"luozhuang": true,
-	"lanling":   true,
-	"lanshan":   true,
-	"lingang":   true,
-	"linshu":    true,
-}
-
 func main() {
 
 	var wg sync.WaitGroup
-	go createDir(&wg)
 	// lotus.tar.gz
 	go deployFrontend(&wg)
 	// ROOT.war
@@ -363,26 +179,6 @@ func main() {
 	go deployLzkpbi(&wg)
 	// etl.zip
 	go deployetl(&wg)
-
-	files, _ := filepath.Glob("*.sql")
-	for _, f := range files {
-		db := strings.Split(f, "_")
-		if name[db[0]] {
-			fmt.Println(f)
-			MysqlLoad(f, db[0])
-		}
-	}
+	DBExecAll()
 	wg.Wait()
 }
-
-var nginx_host = "15.14.12.150:22"
-var tomcat_host = "15.14.12.151:22"
-var lzkpbi_host = "15.14.12.153:22"
-
-// var nginx_host = "118.190.117.250:3009"
-// var tomcat_host = "118.190.117.250:3009"
-// var lzkpbi_host = "118.190.117.250:3009"
-
-// var dsn = `root:000000@tcp(192.168.5.100:3306)/?parseTime=true&loc=Local`
-
-var dsn = `lzkp:yqhtfjzm@tcp(15.14.12.152:3306)/?parseTime=true&loc=Local`

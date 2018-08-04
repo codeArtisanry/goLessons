@@ -27,6 +27,11 @@ git@github.com:13138899620/go-.git                         #gogin框架
 git@github.com:hairichuhe/gostudy.git
 git@github.com:fengpf/gowhole.git
 git@github.com:xiedongmingming/golang.git 
+git@github.com:cleesmith/golang_learning.git
+git@github.com:LinuxGit/Code.git                          #全栈
+git@github.com:radovskyb/go-packages.git                  #multiform
+git@github.com:SimonWaldherr/golibs.git                   #golang----lib
+git@github.com:chauhanr/go-building-blocks.git            #goExample
 ")
 
 

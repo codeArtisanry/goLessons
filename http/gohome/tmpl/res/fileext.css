@@ -1,0 +1,84 @@
+.pdf {
+	background-color: crimson;
+}
+
+.pdf::before {
+    border-bottom:30px solid #A11A29;
+	border-left:30px solid #A11A29;
+}
+
+.gif, .bmp {
+	background-color: salmon;
+}
+.gif::before, .bmp::before {
+    border-bottom:30px solid pink;
+	border-left:30px solid pink;
+}
+
+.css {
+	background-color: #F7BA00;
+}
+.css::before {
+    border-bottom:30px solid #FF9638;
+	border-left:30px solid #FF9638;
+}
+
+.html {
+	background-color: #E44D26;
+}
+.html::before {
+    border-bottom:30px solid #F16529;
+	border-left:30px solid #F16529;
+}
+
+.js {
+	background-color: #F0DB4F;
+    color: #323330;
+}
+.js::after {
+    color: #323330;
+}
+.js::before {
+    border-bottom:30px solid #323330;
+	border-left:30px solid #323330;
+}
+
+.mp3, .mid, .m4a, .wav, .wma, .ogg {
+	background-color: #1BD295;
+}
+
+.mp4, .mov, .avi, .mpg {
+    background-color: #2C0038;
+}
+
+.apk, .app, .bat, .exe, .jar {
+    background-color: #222;
+}
+.apk::after, .app::after, .bat::after, .exe::after, .jar::after {
+    color: #4CF569;
+}
+.apk::before, .app::before, .bat::before, .exe::before, .jar::before {
+    border-bottom:30px solid #111;
+	border-left:30px solid #111;
+}
+
+.png {
+	background-color: #7CAD00;
+}
+
+.jpg {
+	background-color: teal;
+}
+
+.doc, .docx, .txt, .rtf {
+    background-color: #4986E7;
+}#D04424
+
+.doc::before, .docx::before {
+    border-bottom:30px solid #295598;
+	border-left:30px solid #295598;
+}
+
+.zip, .rar, .tar {
+	background-color: #DEBC74;
+}

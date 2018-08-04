@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+    <script type="text/javascript">
+        function myWebsocketStart()
+        {
+            var ws = new WebSocket("ws://localhost:8000/ws");
+            var b = document.getElementById("message");
+            ws.onopen = function (event) {
+                b.innerHTML = "Connected<br/>";
+            };
+            ws.onmessage = function (evt)
+            {
+                b.innerHTML  = b.innerHTML + "<br/>" + evt.data;
+            };
+            ws.onclose = function()
+            {
+                b.innerHTML  = b.innerHTML + "<br/>Connection closed<br/>";
+            };
+        }
+    </script>
+
+</head>
+<body>
+<button onclick="myWebsocketStart()">Subscribe</button>
+<div>
+    <code id="message">Message area</code>
+</div>
+</body>
+</html>

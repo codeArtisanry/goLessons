@@ -1,15 +1,15 @@
 {
     "_FixedFileInfo": {
         "FileVersion": {
-            "Major": 2018,
-            "Minor": 6,
-            "Patch": 27,
+            "Major": 18,
+            "Minor": 7,
+            "Patch": 16,
             "Build": 0
         },
         "ProductVersion": {
             "Major": 2018,
-            "Minor": 6,
-            "Patch": 27,
+            "Minor": 7,
+            "Patch": 16,
             "Build": 0
         },
         "FileFlagsMask": "3f",

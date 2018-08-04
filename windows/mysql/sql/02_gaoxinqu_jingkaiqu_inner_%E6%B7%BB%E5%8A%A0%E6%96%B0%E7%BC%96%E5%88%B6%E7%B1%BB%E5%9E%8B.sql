@@ -1,0 +1,1 @@
+INSERT IGNORE INTO sys_enum_item(enum_id,item_id,`name`) VALUES(3,4,'开发区人员');

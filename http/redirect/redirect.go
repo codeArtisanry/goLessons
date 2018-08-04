@@ -8,6 +8,7 @@ import (
 func redirect(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, "http://www.baidu.com", 301)
+	http.Redirect(w, r, "/", 302)
 }
 
 func main() {
