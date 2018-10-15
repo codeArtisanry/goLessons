@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 )
 
 func ParseFile(name string) (s []string) {
@@ -24,8 +25,16 @@ func Parsesql(f io.Reader) (s []string) {
 	var delimiter = ";"
 	var buffer bytes.Buffer
 	line, isPrefix, err := r.ReadLine()
+	// 移除 UTF8 BOM
+	line = bytes.Trim(line, "\xef\xbb\xbf")
+
 	// for err == nil && !isPrefix {
 	for err == nil {
+		// 移除行尾注释
+		// if i := bytes.Index(line, []byte("--")); i > 0 {
+		// 	line = line[:i]
+		// }
+		// 移除行首行尾空白
 		line = bytes.TrimSpace(line)
 		switch {
 		// 1. 被截断继续读取
@@ -62,6 +71,15 @@ func Parsesql(f io.Reader) (s []string) {
 		// 3. read next line
 		line, isPrefix, err = r.ReadLine()
 	}
+	// 5. 保证结尾不含 delimiter 的文本也会正确解析到
+	if err == io.EOF {
+		content := buffer.String()
+		// 解决 Error 1605: Qurey was empty
+		if strings.TrimSpace(content) != "" {
+			s = append(s, content)
+		}
+	}
+
 	// if isPrefix {
 	// 	fmt.Println("buffer size to small")
 	// 	return

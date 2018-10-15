@@ -28,7 +28,7 @@ func Genconfig() *ssh.ClientConfig {
 
 		buffer, err := ioutil.ReadFile(connectKey)
 		if err != nil {
-			fmt.Fprintln(os.Stderr, "Error:%s%n", err)
+			fmt.Fprintln(os.Stderr, "Error:%s\n", err)
 			return nil
 		}
 		if len(permBytes) != 0 {

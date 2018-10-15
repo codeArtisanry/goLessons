@@ -2,6 +2,7 @@
 set -e
 
 remove_submodules=("
+git@github.com:liguoqinjim/go-labs.git
 ")
 ## Blogs
 submodules=("
@@ -13,7 +14,6 @@ git@github.com:mkaz/working-with-go.git
 git@github.com:Akagi201/learning-golang.git
 git@github.com:pjh130/go.git
 git@github.com:mycodesmells/golang-examples.git
-git@github.com:liguoqinjim/go-labs.git
 git@github.com:xiongyejun/08-go.git
 git@github.com:ningskyer/Algorithms-Learning-With-Go.git   #算法
 git@github.com:bingoohuang/go-utils.git
@@ -32,6 +32,9 @@ git@github.com:LinuxGit/Code.git                          #全栈
 git@github.com:radovskyb/go-packages.git                  #multiform
 git@github.com:SimonWaldherr/golibs.git                   #golang----lib
 git@github.com:chauhanr/go-building-blocks.git            #goExample
+git@github.com:cwen-coder/study-gopkg.git                 #gopkg
+git@github.com:ehlxr/go-utils.git
+git@github.com:kingsmiler/go-playground.git               #golang-sftp
 ")
 
 

@@ -1,0 +1,67 @@
+Hacker: true
+name: steve
+hobbies:
+  - skateboarding
+  - snowboarding
+  - go
+clothing:
+  jacket: leather
+  trousers: denim
+age: 35
+eyes : brown
+beard: true
+env:
+  - HOST: "192.168.0.1"
+  - PORT: 3306
+
+
+GetStringMap:
+  name: redis
+  host: "10.114.0.5"
+GetStringMapString:
+  name: redis
+  host: "10.114.0.5"
+GetStringMapStringSlice:
+  all:
+    - frontend
+    - app
+    - db
+  db:
+    - frontend
+    - app
+    - db
+
+projects:
+  - name: redis
+    host: "10.10.10.10"
+    port: 3306
+  - name: tomcat
+    host: "10.20.10.20"
+
+project:
+  - redis: 
+      host: "10.10.10.10"
+      port: 3306
+  - tomcat:
+      host: "10.20.10.20"
+
+workers:
+  - period: 10s
+    job:
+      name: hello-world
+  - period: 5s
+    job:
+      name: http-requestor
+  - schedule:
+      hour: 17
+      minute: 29
+    job:
+      name: http-requestor
+
+
+  "iso_checksum": "769474248a3897f4865817446f9a4a53",
+  "iso_checksum_type": "md5",
+  "ssh_host":"192.168.5.100"
+  "ssh_username": "packer",
+  "ssh_password": "packer",
+  "shutdown_command": "echo 'packer' | sudo -S shutdown -P now"

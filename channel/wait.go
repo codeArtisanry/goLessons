@@ -6,6 +6,8 @@ import (
 )
 
 func main() {
+
+	Chan()
 	stop := make(chan bool)
 
 	fmt.Println("goroutine监控中...", &stop)
@@ -16,7 +18,8 @@ func main() {
 	//为了检测监控过是否停止，如果没有监控输出，就表示停止了
 	time.Sleep(5 * time.Second)
 }
-func GoWait(stop chan bool) {
+
+func GoWait(stop <-chan bool) {
 	go func() {
 		for {
 			select {
@@ -29,4 +32,16 @@ func GoWait(stop chan bool) {
 			}
 		}
 	}()
+}
+
+func Chan() {
+	ch := make(chan int, 1)
+	for i := 0; i < 10; i++ {
+		select {
+		case ch <- i:
+
+		case x := <-ch:
+			fmt.Println(x) // "0" "2" "4" "6" "8"
+		}
+	}
 }

@@ -37,7 +37,7 @@ func main() {
 func QQMail() {
 	click, ipnum := ParseNginx(attachment)
 	fmt.Println("clik:", click, "ip:", ipnum)
-	var content = bytes.NewBufferString("本统计基于真实的服务器访问日志.\n")
+	var content = bytes.NewBufferString("本统计基于真实的服务器访问日志 --" + time.Now().Format("2006年01月02日") + "\n")
 	content.WriteString("昨日点击量:")
 	content.WriteString(strconv.Itoa(click))
 	content.WriteString("\n昨日独立IP数:")
@@ -45,12 +45,12 @@ func QQMail() {
 	e := email.NewEmail()
 	e.From = "hangruan <lishoulei@hangruan.cn>"
 	e.To = []string{"admin@pytool.com", "xuxy@hangruan.cn", "15863904966@163.com"}
-	e.Subject = "一带一路" + time.Now().Format("2006年01月02日") + "访问日志"
+	e.Subject = "一带一路访问日志"
 	e.Text = StringBytes(content.String())
 	// e.HTML = []byte("<h1>Fancy HTML is supported, too!</h1>")
 	e.AttachFile(attachment)
 	e.Send("smtp.exmail.qq.com:587",
-		smtp.PlainAuth("", "lishoulei@hangruan.cn", "Passwd", "smtp.exmail.qq.com"))
+		smtp.PlainAuth("", "lishoulei@hangruan.cn", "Sdlylshl871016", "smtp.exmail.qq.com"))
 	// print(time.Date())
 }
 

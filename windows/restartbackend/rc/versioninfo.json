@@ -1,0 +1,43 @@
+{
+    "_FixedFileInfo": {
+        "FileVersion": {
+            "Major": 0,
+            "Minor": 0,
+            "Patch": 0,
+            "Build": 0
+        },
+        "ProductVersion": {
+            "Major": 0,
+            "Minor": 0,
+            "Patch": 0,
+            "Build": 0
+        },
+        "FileFlagsMask": "3f",
+        "FileFlags ": "00",
+        "FileOS": "040004",
+        "FileType": "01",
+        "FileSubType": "00"
+    },
+    "StringFileInfo": {
+        "FileDescription": "重启后台程序",
+        "FileVersion": "0.0.0",
+        "ProductName": "履职考评系统",
+        "ProductVersion": "2018.9.25",
+        "LegalCopyright": "Copyright@pytool",
+        "OriginalFilename": "restart.exe",
+        "Comments": " ",
+        "CompanyName": "Company",
+        "InternalName": "",
+        "LegalTrademarks": "",
+        "PrivateBuild": "",
+        "SpecialBuild": ""
+    },
+    "VarFileInfo": {
+        "Translation": {
+            "LangID": "0409",
+            "CharsetID": "04B0"
+        }
+    },
+    "IconPath": "icon.ico",
+    "ManifestPath": ""
+}

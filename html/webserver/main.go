@@ -2,19 +2,21 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
+
 	"github.com/tahasevim/webserver/profilehandler"
-	"flag"
 )
 
 func main() {
-	p := flag.String("port","8080","holds port") //port flag
+
+	p := flag.String("port", "8080", "holds port") //port flag
 	flag.Parse()
 	myServer := http.Server{
-		Addr:	":"+ *p,//address that imply localhost
-		Handler: profilehandler.NewProfileHandler(),//handler of webserver
+		Addr:    ":" + *p,                           //address that imply localhost
+		Handler: profilehandler.NewProfileHandler(), //handler of webserver
 	}
-	log.Println("Server started at port: "+ *p)
-	log.Println(myServer.ListenAndServe())	
+	log.Println("Server started at port: " + *p)
+	log.Println(myServer.ListenAndServe())
 }

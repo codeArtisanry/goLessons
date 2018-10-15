@@ -12,6 +12,8 @@ func TestValue(test *testing.T) {
 	var x MyInt = 7
 	ty := reflect.TypeOf(x)
 	fmt.Println(ty) //typeof.MyInt
+	var xf float64 = 3.4
+	fmt.Println("value:", reflect.ValueOf(xf))
 
 	v := reflect.ValueOf(x)
 	fmt.Println(v.Type()) //valueof.MyInt  ,

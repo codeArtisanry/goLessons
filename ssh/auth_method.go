@@ -14,6 +14,7 @@ import (
 
 	"github.com/mitchellh/go-homedir"
 	"golang.org/x/crypto/ssh"
+	sshagent "golang.org/x/crypto/ssh/agent"
 	"golang.org/x/crypto/ssh/knownhosts"
 )
 

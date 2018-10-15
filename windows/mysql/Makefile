@@ -18,9 +18,9 @@ linux: *.go embed-assets
 
 .PHONY: windows 
 windows: *.go windows-dependencies embed-assets
-	goversioninfo -icon=deploy.ico -manifest=deploy.exe.manifest
-	@- rm binaries/update.exe 
-	CGO_ENABLED=0 GOOS=windows GOARCH=386 go build -ldflags="-s -w " -o binaries/update.exe
+	goversioninfo -icon=rc/icon.ico -manifest=rc/manifest.exe.manifest rc/versioninfo.json
+	@- rm binaries/*.exe 
+	CGO_ENABLED=0 GOOS=windows GOARCH=386 go build -ldflags="-s -w " -o binaries/mysql_`date -I`.exe
 	@# - rm binaries/deploy_windows_64bit.exe
 	@# - CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags="-s -w -H=windowsgui -linkmode internal" -o binaries/deploy_windows_64bit.exe
 	rm resource.syso

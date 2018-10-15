@@ -1,0 +1,4 @@
+[logger]
+[logger.meta.input]
+    dev="/dev/null"
+    host="/dev/null"

@@ -18,7 +18,6 @@ func createDeploy() {
 }
 
 func deployFrontend(wg *sync.WaitGroup) error {
-	wg.Add(1)
 	defer wg.Done()
 
 	// 1. check frontend
@@ -38,9 +37,25 @@ func deployFrontend(wg *sync.WaitGroup) error {
 }
 
 func deployTomcat(wg *sync.WaitGroup) error {
-	wg.Add(1)
 	defer wg.Done()
+	if Exists("lzkpv4.war") {
+		DialSSH(tomcat_host, `mkdir -p /docker/update/ /docker/tomcat/webapps/ /docker/bianban/lzkpv4/ /docker/bianban/backendv4/ /docker/rollback/`)
 
+		fmt.Println("[deployTomcat] Connect to server:", nginx_host)
+
+		// 1. backup old
+		DialSSH(nginx_host, `rm -f /docker/rollback/ROOT.war; mv /docker/bianban/lzkpv4/ROOT.war /docker/rollback/ROOT.war `)
+
+		err := SCP(nginx_host, "./lzkpv4.war", "/docker/bianban/lzkpv4/ROOT.war")
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+		DialSSH(nginx_host, `sh ~/lzkpv4/deploy.sh tomcat;`)
+		DialSSH(tomcat_host, `systemctl restart tomcat8`)
+		os.Mkdir("del", 0755)
+		os.Rename("lzkpv4.war", "del/lzkpv4.war")
+	}
 	// 1. check frontend
 	if Exists("ROOT.war") {
 		DialSSH(tomcat_host, `mkdir -p /docker/update/ /docker/tomcat/webapps/ /docker/bianban/lzkpv4/ /docker/bianban/backendv4/ /docker/rollback/`)
@@ -63,7 +78,6 @@ func deployTomcat(wg *sync.WaitGroup) error {
 	return nil
 }
 func deployBackend(wg *sync.WaitGroup) error {
-	wg.Add(1)
 	defer wg.Done()
 
 	// 1. check frontend
@@ -81,9 +95,39 @@ func deployBackend(wg *sync.WaitGroup) error {
 	}
 	return nil
 }
+func deployLogplan(wg *sync.WaitGroup) error {
 
+	defer wg.Done()
+	var cmd = `sed -i -e "/logPlan.enable/s/^##//" \
+	-e "s|.dbServerName=.*|.dbServerName=15.14.12.152:3306|g" \
+	-e "s|sysDbConfig.dbName=.*|sysDbConfig.dbName=shizhi|g" \
+	-e "s|dbConfigs.DbConfig\[0\].dbName=.*|dbConfigs.DbConfig[0].dbName=shizhi|g" \
+	-e "s|.dbUser=.*|.dbUser=lzkp|g" \
+	-e "s|.dbPws=.*|.dbPws=yqhtfjzm|g" \
+	-e "s|redis.host=.*|redis.host=15.14.12.154|g" \
+	-e "s|redis.password=.*|redis.password=hangruan2018|g" \
+	-e "s|redis.database=.*|redis.database=0|g" \
+	-e "s|fileupload.PrivaPath=.*|fileupload.PrivaPath=logplan/@1\!now\!yyyyMMdd@|g" /docker/tomcat/webapps/logplan/WEB-INF/classes/utility/hrlzkp.properties
+`
+	if Exists("logplan.war") {
+		fmt.Println("[logplan] Connect to server:", lzkpbi_host)
+
+		DialSSH(lzkpbi_host, `mkdir -p /docker/update/ /docker/tomcat/webapps/ /docker/bianban/lzkpv4/ /docker/bianban/backendv4/ /docker/rollback/`)
+		err := SCP(lzkpbi_host, "logplan.war", "/docker/update/logplan.war")
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+		DialSSH(lzkpbi_host, `rm -fr /docker/tomcat/webapps/logplan/;unzip /docker/update/logplan.war -d /docker/tomcat/webapps/logplan/;`)
+		DialSSH(lzkpbi_host, cmd)
+		DialSSH(lzkpbi_host, `systemctl restart tomcat8`)
+		os.Mkdir("del", 0755)
+		os.Rename("logplan.war", "del/logplan.war")
+
+	}
+	return nil
+}
 func deployBIfront(wg *sync.WaitGroup) error {
-	wg.Add(1)
 	defer wg.Done()
 
 	if Exists("bi.tar.gz") {
@@ -101,7 +145,6 @@ func deployBIfront(wg *sync.WaitGroup) error {
 }
 
 func deployLzkpbi(wg *sync.WaitGroup) error {
-	wg.Add(1)
 	defer wg.Done()
 
 	var cmdlzkpbi = `
@@ -114,6 +157,8 @@ sed -i -e "s|.dbServerName=.*|.dbServerName=15.14.12.152:3306|g" \
 	-e "s|redis.database=.*|redis.database=0|g" \
 	-e "s|fileupload.PrivaPath=.*|fileupload.PrivaPath=lzkpbi/@1\!now\!yyyyMMdd@|g" /docker/tomcat/webapps/lzkpbi/WEB-INF/classes/utility/lzkpbi.properties
 `
+
+	// sed -i 's/15.14.12/192.168.5' /docker/tomcat/webapps/lzkpbi/WEB-INF/classes/utility/lzkpbi.properties
 	// 1. check frontend
 	if Exists("lzkpbi.war") {
 		fmt.Println("[deployLzkpbi] Connect to server:", lzkpbi_host)
@@ -138,7 +183,6 @@ sed -i -e "s|.dbServerName=.*|.dbServerName=15.14.12.152:3306|g" \
 }
 
 func deployetl(wg *sync.WaitGroup) {
-	wg.Add(1)
 	defer wg.Done()
 
 	if Exists("etl.zip") {
@@ -155,18 +199,13 @@ func deployetl(wg *sync.WaitGroup) {
 // 判断所给路径文件/文件夹是否存在
 func Exists(path string) bool {
 	_, err := os.Stat(path) //os.Stat获取文件信息
-	if err != nil {
-		if os.IsExist(err) {
-			return true
-		}
-		return false
-	}
-	return true
+	return err == nil || os.IsExist(err)
 }
 
 func main() {
-
+	fmt.Println("start deploy!")
 	var wg sync.WaitGroup
+	wg.Add(7)
 	// lotus.tar.gz
 	go deployFrontend(&wg)
 	// ROOT.war
@@ -177,8 +216,14 @@ func main() {
 	go deployBIfront(&wg)
 	// lzkpbi.war
 	go deployLzkpbi(&wg)
+	//
+	go deployLogplan(&wg)
 	// etl.zip
 	go deployetl(&wg)
-	DBExecAll()
+	// DBExecAll()
+
 	wg.Wait()
+	fmt.Println("Finish deploy!")
+	fmt.Scanln()
+
 }
