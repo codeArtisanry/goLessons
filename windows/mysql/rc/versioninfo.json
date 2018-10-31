@@ -1,5 +1,5 @@
 {
-    "_FixedFileInfo": {
+    "FixedFileInfo": {
         "FileVersion": {
             "Major": 0,
             "Minor": 0,
@@ -18,15 +18,15 @@
         "FileType": "01",
         "FileSubType": "00"
     },
-    "StringFileInfo": {
+    "StringFileInfo": { 
+        "Comments": "1.自动移除BOM\n2.移除行首空白\n3.保留行尾注释\n4.支持重设delimiter\n5.增加bi支持",
+        "CompanyName": "pytool",
         "FileDescription": "数据库升级程序",
         "FileVersion": "1.2.0",
         "ProductName": "履职考评数据库升级",
         "ProductVersion": "2018.9.26",
         "LegalCopyright": "Copyright@pytool",
         "OriginalFilename": "mysql.exe",
-        "Comments": "1.自动移除BOM\n2.移除行首空白\n3.保留行尾注释\n4.支持重设delimiter\n5.增加bi支持",
-        "CompanyName": "pytool",
         "InternalName": "",
         "LegalTrademarks": "",
         "PrivateBuild": "",

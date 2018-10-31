@@ -1,8 +1,12 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"io"
+)
 
 func main() {
+	appendnil()
 	s := []int{1}
 	s = append(s, 2)
 	s = append(s, 3)
@@ -13,4 +17,12 @@ func main() {
 		d := i
 		fmt.Printf("%v %p\n", d, &d)
 	}
+}
+
+func appendnil() {
+	var s []io.Reader
+	fmt.Println(s)
+	s = append(s, nil)
+	s = append(s, nil)
+	fmt.Println(s)
 }

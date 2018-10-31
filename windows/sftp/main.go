@@ -51,6 +51,7 @@ var (
 	err        error
 	sftpClient *sftp.Client
 )
+var dbnames = []string{"mengyin", "pingyi", "shizhi", "tancheng", "yinan", "yishui", "feixian", "gaoxinqu", "hedong", "jingkaiqu", "junan", "luozhuang", "lanling", "lanshan", "lingang", "linshu"}
 
 func main() {
 
@@ -58,37 +59,47 @@ func main() {
 	// sftpClient, err = connect("root", "sdlylshl871016", "111.235.181.127", 443)
 	sftpClient, err = connect("root", "HR2018!!", "15.14.12.150", 22)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	defer sftpClient.Close()
 	// 用来测试的远程文件路径 和 本地文件夹
-	var shizhi = "/docker/backup/" + time.Now().Format(FORMAT) + "_shizhi_inner.zip"
 	// fmt.Println(shizhi)
 	// var localDir = "."
-	Down(shizhi, "./")
+	date_dir := "db_" + time.Now().Format(FORMAT)
+	os.Mkdir(date_dir, 0755)
 	var lzkpbi = "/docker/backup/" + time.Now().Format(FORMAT) + "_lzkp_bi_inner.zip"
-	Down(lzkpbi, "./")
+	Down(lzkpbi, date_dir)
+	for _, n := range dbnames {
+		p := "/docker/backup/" + time.Now().Format(FORMAT) + "_" + n + "_inner.zip"
+		// fmt.Println(p)
+
+		Down(p, date_dir)
+	}
+	// fmt.Scanln()
 }
 
 func Down(src, dst string) {
 	fmt.Println(src, "数据正在复制中，请耐心等待...")
 	srcFile, err := sftpClient.Open(src)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return
 	}
 	defer srcFile.Close()
 
 	var localFileName = path.Base(src)
 	dstFile, err := os.Create(path.Join(dst, localFileName))
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return
 	}
 	defer dstFile.Close()
 
 	if _, err = srcFile.WriteTo(dstFile); err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return
 	}
 
-	fmt.Println("数据复制完成!")
+	fmt.Println(src, "数据复制完成!")
 
 }

@@ -3,8 +3,12 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"sync"
+	"time"
+
+	"github.com/imroc/req"
 )
 
 //go:generate goversioninfo -icon=icon.ico
@@ -99,6 +103,7 @@ func deployLogplan(wg *sync.WaitGroup) error {
 
 	defer wg.Done()
 	var cmd = `sed -i -e "/logPlan.enable/s/^##//" \
+	-e "/dbName=mengshan/d" \
 	-e "s|.dbServerName=.*|.dbServerName=15.14.12.152:3306|g" \
 	-e "s|sysDbConfig.dbName=.*|sysDbConfig.dbName=shizhi|g" \
 	-e "s|dbConfigs.DbConfig\[0\].dbName=.*|dbConfigs.DbConfig[0].dbName=shizhi|g" \
@@ -123,6 +128,14 @@ func deployLogplan(wg *sync.WaitGroup) error {
 		DialSSH(lzkpbi_host, `systemctl restart tomcat8`)
 		os.Mkdir("del", 0755)
 		os.Rename("logplan.war", "del/logplan.war")
+		time.Sleep(time.Minute)
+		client := &http.Client{Timeout: 3 * time.Minute}
+		resp2, err := req.Get(Execlogplan, client)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		fmt.Println(resp2)
 
 	}
 	return nil

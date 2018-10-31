@@ -13,3 +13,5 @@ var dsn = `lzkp:yqhtfjzm@tcp(15.14.12.152:3306)/?parseTime=true&loc=Local`
 // var nginx_host = "192.168.5.150:22"
 // var tomcat_host = "192.168.5.151:22"
 // var lzkpbi_host = "192.168.5.153:22"
+
+var Execlogplan = "http://15.14.12.153:10040/logplan/api/v1/UtilityUtils/ACT_EXECPLANJOB?autoLoad=true&dbs=all&pwd=R3aB6x8f0"

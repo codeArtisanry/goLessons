@@ -18,10 +18,6 @@
 	path = submodules/mycodesmells
 	url = git@github.com:mycodesmells/golang-examples
 	branch = master
-[submodule "submodules/liguoqinjim"]
-	path = submodules/liguoqinjim
-	url = git@github.com:liguoqinjim/go-labs
-	branch = master
 [submodule "submodules/foamdino"]
 	path = submodules/foamdino
 	url = git@github.com:foamdino/learning-go
@@ -101,4 +97,16 @@
 [submodule "submodules/chauhanr"]
 	path = submodules/chauhanr
 	url = git@github.com:chauhanr/go-building-blocks
+	branch = master
+[submodule "submodules/cwen-coder"]
+	path = submodules/cwen-coder
+	url = git@github.com:cwen-coder/study-gopkg
+	branch = master
+[submodule "submodules/ehlxr"]
+	path = submodules/ehlxr
+	url = git@github.com:ehlxr/go-utils
+	branch = master
+[submodule "submodules/kingsmiler"]
+	path = submodules/kingsmiler
+	url = git@github.com:kingsmiler/go-playground
 	branch = master
